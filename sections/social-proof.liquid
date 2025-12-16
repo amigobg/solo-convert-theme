@@ -1,0 +1,295 @@
+{% comment %}
+  Social Proof Section - Testimonials and Reviews
+  Display customer testimonials to build trust and credibility
+{% endcomment %}
+
+<div class="social-proof" style="--bg-color: {{ section.settings.background_color }}">
+  {% if section.settings.heading != blank %}
+    <h2 class="social-proof__heading">{{ section.settings.heading }}</h2>
+  {% endif %}
+  
+  {% if section.settings.subheading != blank %}
+    <p class="social-proof__subheading">{{ section.settings.subheading }}</p>
+  {% endif %}
+
+  <div class="testimonials">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when 'testimonial' %}
+          <div class="testimonial" {{ block.shopify_attributes }}>
+            {% if block.settings.show_stars %}
+              <div class="testimonial__rating">
+                {% render 'stars', rating: 5, max: 5 %}
+              </div>
+            {% endif %}
+            
+            {% if block.settings.quote != blank %}
+              <blockquote class="testimonial__quote">
+                "{{ block.settings.quote }}"
+              </blockquote>
+            {% endif %}
+            
+            <div class="testimonial__author">
+              {% if block.settings.avatar != blank %}
+                <img 
+                  src="{{ block.settings.avatar | image_url: width: 60 }}" 
+                  alt="{{ block.settings.name }}"
+                  class="testimonial__avatar"
+                  loading="lazy"
+                >
+              {% endif %}
+              
+              <div class="testimonial__author-info">
+                {% if block.settings.name != blank %}
+                  <div class="testimonial__name">{{ block.settings.name }}</div>
+                {% endif %}
+                {% if block.settings.title != blank %}
+                  <div class="testimonial__title">{{ block.settings.title }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+        {% when 'stats' %}
+          <div class="social-proof-stats" {{ block.shopify_attributes }}>
+            {% if block.settings.number != blank %}
+              <div class="stat__number">{{ block.settings.number }}</div>
+            {% endif %}
+            {% if block.settings.label != blank %}
+              <div class="stat__label">{{ block.settings.label }}</div>
+            {% endif %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .social-proof {
+    padding: 4rem 0;
+    background-color: var(--bg-color, #f9f9f9);
+  }
+
+  .social-proof__heading {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .social-proof__subheading {
+    font-size: 1.125rem;
+    color: #666;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+  }
+
+  .testimonials {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 767px) {
+    .testimonials {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .testimonial {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .testimonial__rating {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .testimonial__quote {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    font-style: italic;
+  }
+
+  .testimonial__author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+  }
+
+  .testimonial__avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .testimonial__author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .testimonial__name {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .testimonial__title {
+    font-size: 0.85rem;
+    color: #666;
+  }
+
+  .social-proof-stats {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stat__number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #000;
+    line-height: 1;
+  }
+
+  .stat__label {
+    font-size: 1rem;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Social Proof",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Section Subheading",
+      "default": "Join thousands of satisfied customers"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#f9f9f9"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_stars",
+          "label": "Show 5-Star Rating",
+          "default": true
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Customer Quote",
+          "default": "This product changed my life! I can't imagine going back to my old routine."
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Customer Photo (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer Name",
+          "default": "Sarah M."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Customer Title/Location",
+          "default": "Verified Buyer"
+        }
+      ]
+    },
+    {
+      "type": "stats",
+      "name": "Statistic",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number/Stat",
+          "default": "10,000+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Stat Label",
+          "default": "Happy Customers"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social Proof",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "show_stars": true,
+            "quote": "This product exceeded all my expectations. Worth every penny!",
+            "name": "Sarah M.",
+            "title": "Verified Buyer"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "show_stars": true,
+            "quote": "I've tried many alternatives, but this is by far the best. Highly recommended!",
+            "name": "James L.",
+            "title": "Verified Buyer"
+          }
+        },
+        {
+          "type": "stats",
+          "settings": {
+            "number": "10,000+",
+            "label": "Happy Customers"
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

@@ -1,11 +1,11 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Skeleton",
-    "theme_version": "0.1.0",
-    "theme_author": "Shopify",
-    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
-    "theme_support_url": "https://support.shopify.com/"
+    "theme_name": "Solo Convert",
+    "theme_version": "1.0.0",
+    "theme_author": "Solo Convert Theme",
+    "theme_documentation_url": "https://github.com/amigobg/solo-convert-theme",
+    "theme_support_url": "https://github.com/amigobg/solo-convert-theme/issues"
   },
   {
     "name": "t:general.typography",
@@ -18,7 +18,8 @@
         "type": "font_picker",
         "id": "type_primary_font",
         "default": "work_sans_n4",
-        "label": "t:general.primary"
+        "label": "t:general.primary",
+        "info": "System fonts load faster and improve performance"
       }
     ]
   },
@@ -39,7 +40,8 @@
             "label": "t:options.page_width.wide"
           }
         ],
-        "default": "90rem"
+        "default": "90rem",
+        "info": "Narrow width recommended for single-product focus"
       },
       {
         "type": "range",

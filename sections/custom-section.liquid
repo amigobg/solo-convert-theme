@@ -1,60 +1,131 @@
-<div class="custom-section full-width">
-  {% if section.settings.background_image %}
-    <div class="custom-section__background">
-      {{ section.settings.background_image | image_url: width: 2000 | image_tag }}
-    </div>
-  {% endif %}
+{% comment %}
+  Homepage Notice - For single-product theme
+  Directs users to the main product page
+{% endcomment %}
 
-  <div class="custom-section__content">
-    {% content_for 'blocks' %}
+<div class="homepage-notice">
+  <div class="homepage-notice__content">
+    <h1 class="homepage-notice__heading">
+      {% if section.settings.heading != blank %}
+        {{ section.settings.heading }}
+      {% else %}
+        Welcome to Our Store
+      {% endif %}
+    </h1>
+    
+    {% if section.settings.text != blank %}
+      <p class="homepage-notice__text">{{ section.settings.text }}</p>
+    {% endif %}
+
+    {% if section.settings.button_text != blank %}
+      <a href="{{ section.settings.button_link | default: '/products' }}" class="homepage-notice__button btn btn--primary btn--large">
+        {{ section.settings.button_text }}
+      </a>
+    {% endif %}
   </div>
 </div>
 
 {% stylesheet %}
-  .custom-section {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
+  .homepage-notice {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    text-align: center;
   }
-  .custom-section__background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
+
+  .homepage-notice__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 600px;
   }
-  .custom-section__background img {
-    position: absolute;
-    width: 100%;
-    height: auto;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+
+  .homepage-notice__heading {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: bold;
+    line-height: 1.2;
   }
-  .custom-section__content {
-    display: grid;
-    grid-template-columns: var(--content-grid);
+
+  .homepage-notice__text {
+    font-size: 1.25rem;
+    color: #666;
+    line-height: 1.6;
   }
-  .custom-section__content > * {
-    grid-column: 2;
+
+  .homepage-notice__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    text-decoration: none;
+    margin-top: 1rem;
+  }
+
+  .btn {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .btn--primary {
+    background-color: #000;
+    color: #fff;
+  }
+
+  .btn--primary:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+  }
+
+  .btn--large {
+    padding: 1.25rem 3rem;
+    font-size: 1.25rem;
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.custom_section",
-  "blocks": [{ "type": "@theme" }],
   "settings": [
     {
-      "type": "image_picker",
-      "id": "background_image",
-      "label": "t:labels.background"
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Single-Product Shopify Theme"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Description",
+      "default": "This theme is optimized for selling one hero product. Set your main product page as the homepage in Online Store > Navigation > Home."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "View Product"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link",
+      "info": "Link to your product page"
     }
   ],
   "presets": [
     {
       "name": "t:general.custom_section"
     }
-  ]
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
 }
 {% endschema %}

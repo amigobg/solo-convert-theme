@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
 
@@ -27,9 +30,12 @@
   </head>
 
   <body>
+    {% comment %} Minimal header - no distracting navigation for single-product focus {% endcomment %}
     {% sections 'header-group' %}
 
-    {{ content_for_layout }}
+    <main role="main">
+      {{ content_for_layout }}
+    </main>
 
     {% sections 'footer-group' %}
   </body>
