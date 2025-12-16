@@ -35,29 +35,23 @@
               <td class="comparison-table__cell comparison-table__cell--highlight">
                 {% if block.settings.your_product == 'yes' %}
                   <span class="comparison-table__check">✓</span>
-                {% elsif block.settings.your_product == 'no' %}
-                  <span class="comparison-table__cross">✗</span>
                 {% else %}
-                  <span class="comparison-table__text">{{ block.settings.your_product }}</span>
+                  <span class="comparison-table__cross">✗</span>
                 {% endif %}
               </td>
               <td class="comparison-table__cell">
                 {% if block.settings.competitor_1 == 'yes' %}
                   <span class="comparison-table__check">✓</span>
-                {% elsif block.settings.competitor_1 == 'no' %}
-                  <span class="comparison-table__cross">✗</span>
                 {% else %}
-                  <span class="comparison-table__text">{{ block.settings.competitor_1 }}</span>
+                  <span class="comparison-table__cross">✗</span>
                 {% endif %}
               </td>
               {% if section.blocks | where: 'type', 'competitor' | size > 1 %}
                 <td class="comparison-table__cell">
                   {% if block.settings.competitor_2 == 'yes' %}
                     <span class="comparison-table__check">✓</span>
-                  {% elsif block.settings.competitor_2 == 'no' %}
-                    <span class="comparison-table__cross">✗</span>
                   {% else %}
-                    <span class="comparison-table__text">{{ block.settings.competitor_2 }}</span>
+                    <span class="comparison-table__cross">✗</span>
                   {% endif %}
                 </td>
               {% endif %}
@@ -264,10 +258,6 @@
             {
               "value": "no",
               "label": "No (✗)"
-            },
-            {
-              "value": "custom",
-              "label": "Custom Text"
             }
           ],
           "default": "yes"
@@ -284,10 +274,6 @@
             {
               "value": "no",
               "label": "No (✗)"
-            },
-            {
-              "value": "custom",
-              "label": "Custom Text"
             }
           ],
           "default": "no"
@@ -304,10 +290,6 @@
             {
               "value": "no",
               "label": "No (✗)"
-            },
-            {
-              "value": "custom",
-              "label": "Custom Text"
             }
           ],
           "default": "no"

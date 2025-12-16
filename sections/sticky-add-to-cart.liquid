@@ -43,11 +43,11 @@
   // Sticky Add to Cart functionality
   (function() {
     const stickyAtc = document.getElementById('sticky-atc');
+    if (!stickyAtc) return;
+
     const heroForm = document.getElementById('hero-product-form');
     let lastScrollTop = 0;
     const scrollThreshold = 300;
-
-    if (!stickyAtc || !heroForm) return;
 
     // Show/hide sticky bar based on scroll position
     function handleScroll() {
@@ -71,6 +71,15 @@
         const submitButton = heroForm.querySelector('button[type="submit"]');
         if (submitButton && !submitButton.disabled) {
           submitButton.click();
+        }
+      } else {
+        // Fallback: try to find any product form on the page
+        const productForm = document.querySelector('form[action*="/cart/add"]');
+        if (productForm) {
+          const submitButton = productForm.querySelector('button[type="submit"]');
+          if (submitButton && !submitButton.disabled) {
+            submitButton.click();
+          }
         }
       }
     };

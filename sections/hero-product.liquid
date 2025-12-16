@@ -76,8 +76,6 @@
     {% comment %} Product Form {% endcomment %}
     <div class="hero-product__form">
       {% form 'product', product, id: 'hero-product-form' %}
-        <input type="hidden" name="id" value="{{ current_variant.id }}">
-        
         {% if product.variants.size > 1 %}
           <div class="hero-product__variants">
             <select name="id" id="hero-variant-select" class="hero-product__variant-select">
@@ -92,6 +90,8 @@
               {% endfor %}
             </select>
           </div>
+        {% else %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
         {% endif %}
 
         {% if section.settings.show_quantity %}
