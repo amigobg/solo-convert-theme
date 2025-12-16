@@ -9,12 +9,12 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "hello-world",
+    "notice": {
+      "type": "custom-section",
       "settings": {}
     }
   },
   "order": [
-    "main"
+    "notice"
   ]
 }

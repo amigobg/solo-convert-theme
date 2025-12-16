@@ -1,0 +1,54 @@
+{% comment %}
+  Renders star rating display
+  @param {number} rating - The rating value (e.g., 4.5)
+  @param {number} max - The maximum rating (default: 5)
+{% endcomment %}
+
+{% liquid
+  assign max = max | default: 5
+  assign rating_percent = rating | times: 100.0 | divided_by: max
+%}
+
+<div class="stars" aria-label="Rating: {{ rating }} out of {{ max }}">
+  <div class="stars__empty">
+    {% for i in (1..max) %}
+      <span class="star">★</span>
+    {% endfor %}
+  </div>
+  <div class="stars__filled" style="--rating-percent: {{ rating_percent }}%">
+    {% for i in (1..max) %}
+      <span class="star">★</span>
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .stars {
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+  }
+
+  .stars__empty,
+  .stars__filled {
+    display: flex;
+    gap: 2px;
+  }
+
+  .stars__empty {
+    color: #ddd;
+  }
+
+  .stars__filled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #ffc107;
+    overflow: hidden;
+    width: var(--rating-percent);
+  }
+
+  .star {
+    font-size: 1.25rem;
+  }
+{% endstylesheet %}

@@ -1,0 +1,531 @@
+{% comment %}
+  Hero Product Section - Above the Fold Product Display
+  Optimized for immediate conversion with:
+  - Product title and core benefit
+  - Price with compare-at price
+  - Star rating
+  - Primary CTA (Add to Cart / Buy Now)
+  - Payment badges
+{% endcomment %}
+
+<div class="hero-product">
+  <div class="hero-product__media">
+    {% if product.featured_image %}
+      {% render 'image', 
+        image: product.featured_image, 
+        class: 'hero-product__image',
+        width: 1200 
+      %}
+    {% else %}
+      <div class="hero-product__placeholder">
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="hero-product__content">
+    {% comment %} Star Rating {% endcomment %}
+    {% if section.settings.show_rating %}
+      <div class="hero-product__rating">
+        {% if product.metafields.reviews.rating.value %}
+          <div class="rating">
+            {% assign rating_value = product.metafields.reviews.rating.value.rating %}
+            {% assign rating_max = product.metafields.reviews.rating.value.scale_max | default: 5 %}
+            {% render 'stars', rating: rating_value, max: rating_max %}
+            <span class="rating__count">({{ product.metafields.reviews.rating_count }})</span>
+          </div>
+        {% elsif section.settings.static_rating > 0 %}
+          <div class="rating">
+            {% render 'stars', rating: section.settings.static_rating, max: 5 %}
+            <span class="rating__count">({{ section.settings.static_rating_count }})</span>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% comment %} Product Title {% endcomment %}
+    <h1 class="hero-product__title">
+      {% if section.settings.custom_title != blank %}
+        {{ section.settings.custom_title }}
+      {% else %}
+        {{ product.title }}
+      {% endif %}
+    </h1>
+
+    {% comment %} Core Benefit {% endcomment %}
+    {% if section.settings.core_benefit != blank %}
+      <p class="hero-product__benefit">{{ section.settings.core_benefit }}</p>
+    {% endif %}
+
+    {% comment %} Price {% endcomment %}
+    <div class="hero-product__price">
+      {% assign current_variant = product.selected_or_first_available_variant %}
+      
+      {% if current_variant.compare_at_price > current_variant.price %}
+        <span class="hero-product__price--compare">{{ current_variant.compare_at_price | money }}</span>
+        <span class="hero-product__price--sale">{{ current_variant.price | money }}</span>
+        <span class="hero-product__price--badge">
+          {% assign savings_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round %}
+          Save {{ savings_percent }}%
+        </span>
+      {% else %}
+        <span class="hero-product__price--regular">{{ current_variant.price | money }}</span>
+      {% endif %}
+    </div>
+
+    {% comment %} Product Form {% endcomment %}
+    <div class="hero-product__form">
+      {% form 'product', product, id: 'hero-product-form' %}
+        <input type="hidden" name="id" value="{{ current_variant.id }}">
+        
+        {% if product.variants.size > 1 %}
+          <div class="hero-product__variants">
+            <select name="id" id="hero-variant-select" class="hero-product__variant-select">
+              {% for variant in product.variants %}
+                <option
+                  value="{{ variant.id }}"
+                  {% if variant == current_variant %}selected="selected"{% endif %}
+                  {% unless variant.available %}disabled{% endunless %}
+                >
+                  {{ variant.title }}{% unless variant.available %} - Sold Out{% endunless %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+
+        {% if section.settings.show_quantity %}
+          <div class="hero-product__quantity">
+            <label for="hero-quantity">Quantity</label>
+            <input 
+              type="number" 
+              id="hero-quantity" 
+              name="quantity" 
+              value="1" 
+              min="1"
+              class="hero-product__quantity-input"
+            >
+          </div>
+        {% endif %}
+
+        <div class="hero-product__buttons">
+          <button 
+            type="submit" 
+            name="add"
+            class="hero-product__add-to-cart btn btn--primary"
+            {% unless current_variant.available %}disabled{% endunless %}
+          >
+            {% if current_variant.available %}
+              {% if section.settings.cta_text != blank %}
+                {{ section.settings.cta_text }}
+              {% else %}
+                Add to Cart
+              {% endif %}
+            {% else %}
+              Sold Out
+            {% endif %}
+          </button>
+
+          {% if section.settings.show_buy_now %}
+            {{ form | payment_button }}
+          {% endif %}
+        </div>
+      {% endform %}
+    </div>
+
+    {% comment %} Payment Badges {% endcomment %}
+    {% if section.settings.show_payment_badges %}
+      <div class="hero-product__payment-badges">
+        <div class="payment-badges">
+          {% if section.settings.badge_text != blank %}
+            <span class="payment-badges__text">{{ section.settings.badge_text }}</span>
+          {% endif %}
+          <div class="payment-badges__icons">
+            {% for i in (1..6) %}
+              {% assign badge_icon = 'badge_icon_' | append: i %}
+              {% if section.settings[badge_icon] != blank %}
+                <img src="{{ section.settings[badge_icon] | image_url: width: 50 }}" alt="Payment badge" loading="lazy">
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% comment %} Trust Signals {% endcomment %}
+    {% if section.settings.trust_signal_1 != blank or section.settings.trust_signal_2 != blank or section.settings.trust_signal_3 != blank %}
+      <div class="hero-product__trust-signals">
+        {% if section.settings.trust_signal_1 != blank %}
+          <div class="trust-signal">{{ section.settings.trust_signal_1 }}</div>
+        {% endif %}
+        {% if section.settings.trust_signal_2 != blank %}
+          <div class="trust-signal">{{ section.settings.trust_signal_2 }}</div>
+        {% endif %}
+        {% if section.settings.trust_signal_3 != blank %}
+          <div class="trust-signal">{{ section.settings.trust_signal_3 }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .hero-product {
+    display: grid;
+    gap: 2rem;
+    padding: 2rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .hero-product {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      padding: 3rem 0;
+    }
+  }
+
+  .hero-product__media {
+    position: relative;
+    width: 100%;
+  }
+
+  .hero-product__image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .hero-product__placeholder {
+    aspect-ratio: 1;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+  }
+
+  .hero-product__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .hero-product__rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .rating__count {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .hero-product__title {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .hero-product__benefit {
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .hero-product__price {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+  }
+
+  .hero-product__price--compare {
+    font-size: 1.25rem;
+    text-decoration: line-through;
+    color: #999;
+  }
+
+  .hero-product__price--sale,
+  .hero-product__price--regular {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--color-foreground);
+  }
+
+  .hero-product__price--badge {
+    background-color: #d32f2f;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .hero-product__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .hero-product__variant-select,
+  .hero-product__quantity-input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    width: 100%;
+  }
+
+  .hero-product__quantity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .hero-product__quantity label {
+    font-weight: 600;
+  }
+
+  .hero-product__quantity-input {
+    max-width: 120px;
+  }
+
+  .hero-product__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    width: 100%;
+  }
+
+  .btn--primary {
+    background-color: #000;
+    color: #fff;
+  }
+
+  .btn--primary:hover:not(:disabled) {
+    background-color: #333;
+    transform: translateY(-2px);
+  }
+
+  .btn--primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  .shopify-payment-button {
+    width: 100%;
+  }
+
+  .hero-product__payment-badges {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+
+  .payment-badges__text {
+    display: block;
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  .payment-badges__icons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .payment-badges__icons img {
+    height: 30px;
+    width: auto;
+  }
+
+  .hero-product__trust-signals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .trust-signal {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .trust-signal::before {
+    content: "✓";
+    color: #4caf50;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero Product",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product Information"
+    },
+    {
+      "type": "text",
+      "id": "custom_title",
+      "label": "Custom Product Title",
+      "info": "Leave blank to use product title"
+    },
+    {
+      "type": "textarea",
+      "id": "core_benefit",
+      "label": "Main Benefit Headline",
+      "info": "One sentence describing the core benefit, not features",
+      "default": "Transform your life with our premium solution"
+    },
+    {
+      "type": "header",
+      "content": "Rating & Reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show Star Rating",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "static_rating",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "label": "Static Rating (if no reviews)",
+      "default": 4.5
+    },
+    {
+      "type": "number",
+      "id": "static_rating_count",
+      "label": "Static Review Count",
+      "default": 127
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Add to Cart Button Text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_buy_now",
+      "label": "Show Buy Now Button",
+      "info": "Dynamic checkout button (Apple Pay, Shop Pay, etc.)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity",
+      "label": "Show Quantity Selector",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Payment Badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_badges",
+      "label": "Show Payment Badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Section Text",
+      "default": "Secure payment options:"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_icon_1",
+      "label": "Payment Badge 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_icon_2",
+      "label": "Payment Badge 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_icon_3",
+      "label": "Payment Badge 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_icon_4",
+      "label": "Payment Badge 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_icon_5",
+      "label": "Payment Badge 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_icon_6",
+      "label": "Payment Badge 6"
+    },
+    {
+      "type": "header",
+      "content": "Trust Signals"
+    },
+    {
+      "type": "text",
+      "id": "trust_signal_1",
+      "label": "Trust Signal 1",
+      "default": "Free Shipping on Orders Over $50"
+    },
+    {
+      "type": "text",
+      "id": "trust_signal_2",
+      "label": "Trust Signal 2",
+      "default": "30-Day Money Back Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "trust_signal_3",
+      "label": "Trust Signal 3",
+      "default": "Secure Checkout"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Product"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}
